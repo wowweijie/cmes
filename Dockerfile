@@ -1,38 +1,45 @@
-# our local base image
-FROM ubuntu:20.04
+# Building the image:
+# sudo docker build -t ftxcc - < ./Dockerfile
+#
+# Running:
+# sudo docker run -it -v /path/to/src/:/ftxcc -w /ftxcc/bin ftxcc /bin/bash
 
-LABEL description="Container for use with Visual Studio" 
+FROM ubuntu:18.04
 
-# set timezone
-ENV TZ=Etc/UTC 
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# TODO to upgrade to libssl1.1, we need to modify the code
+# https://wiki.openssl.org/index.php/OpenSSL_1.1.0_Changes
+RUN apt-get -y update && apt-get install -y \
+    libssl1.0-dev \
+    g++ \
+    make \
+    pkg-config \
+    cmake \
+    curl \
+    tar \
+    less \
+    gzip \
+    ssh \
+    ca-certificates \
+    build-essential software-properties-common # required for add-apt-repository
 
-# install CMake
-ENV version=3.21
-ENV build=1
-RUN apt-get update && apt-get install -y build-essential libtool autoconf unzip wget
-RUN cd /tmp
-RUN wget https://github.com/Kitware/CMake/releases/download/v${version}.${build}/cmake-${version}.${build}-linux-x86_64.sh
-RUN mkdir /opt/cmake
-RUN chmod +x cmake-$version.$build-linux-x86_64.sh
-RUN yes | ./cmake-$version.$build-linux-x86_64.sh --prefix=/opt
-RUN ln -s /opt/cmake-$version.$build-linux-x86_64/bin/* /usr/local/bin
+# GCC-8 Installation
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+    && apt-get update -y \
+    && apt-get install -y gcc-8 g++-8 \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
 
-# install build dependencies 
-RUN apt-get update && apt-get install -y g++ rsync zip openssh-server ninja-build 
-RUN apt install -y libssl-dev
-
-# install dev dependencies 
-RUN apt-get install -y vim
-
-# configure SSH for communication with Visual Studio 
-RUN mkdir -p /var/run/sshd
-
-RUN echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config && \ 
-   ssh-keygen -A 
-
-# add files
-ADD start_service.sh /tmp
-
-# expose port 22 
-EXPOSE 22
+# Build boost
+RUN rm -rf /usr/include/boost; rm -rf /usr/lib/libboost*
+ARG BOOST_VERSION=1.71.0
+ARG BOOST_CHECKSUM=96b34f7468f26a141f6020efb813f1a2f3dfb9797ecf76a7d7cbd843cc95f5bd
+ARG BOOST_DIR=boost
+ARG CONCURRENT_PROCESSES=1
+ENV BOOST_VERSION ${BOOST_VERSION}
+RUN mkdir -p ${BOOST_DIR} \
+    && cd ${BOOST_DIR} \
+    && curl -L --retry 3 "https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_1_71_0.tar.gz" -o boost.tar.gz \
+    && echo "${BOOST_CHECKSUM}  boost.tar.gz" | sha256sum -c \
+    && tar -xzf boost.tar.gz --strip 1 \
+    && cp -r boost /usr/include/boost \
+    && cd .. && rm -rf ${BOOST_DIR} \
+    && rm -rf /var/cache/*
