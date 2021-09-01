@@ -14,11 +14,15 @@ RUN apt-get -y update && apt-get install -y \
     make \
     pkg-config \
     cmake \
+    ninja-build \
     curl \
     tar \
     less \
     gzip \
     ssh \
+    openssh-server \
+    gdb \
+    rsync \
     ca-certificates \
     build-essential software-properties-common # required for add-apt-repository
 
@@ -37,9 +41,12 @@ ARG CONCURRENT_PROCESSES=1
 ENV BOOST_VERSION ${BOOST_VERSION}
 RUN mkdir -p ${BOOST_DIR} \
     && cd ${BOOST_DIR} \
-    && curl -L --retry 3 "https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_1_71_0.tar.gz" -o boost.tar.gz \
-    && echo "${BOOST_CHECKSUM}  boost.tar.gz" | sha256sum -c \
-    && tar -xzf boost.tar.gz --strip 1 \
+    && wget -c "https://boostorg.jfrog.io/artifactory/main/release/1.71.0/source/boost_1_71_0.tar.gz" \
+    && echo "${BOOST_CHECKSUM}  boost_1_71_0.tar.gz" | sha256sum -c \
+    && tar -xzf boost_1_71_0.tar.gz --strip 1 \
     && cp -r boost /usr/include/boost \
     && cd .. && rm -rf ${BOOST_DIR} \
     && rm -rf /var/cache/*
+
+# add files
+ADD start_service.sh /tmp
