@@ -5,6 +5,13 @@ cd bin
 cmake ..
 ```
 
+## Build and run Docker Image
+```bash
+docker build -t ubuntu_vs .
+docker run -p 5000:22 -i -t ubuntu-vs /bin/bash
+./tmp/start_service.sh
+```
+
 ## Buid
 ```bash
 make
