@@ -23,4 +23,5 @@ make
 ```bash
 ./src/example/rest_test
 ./src/example/ws_test
+./src/example/bitstamp_ws_test
 ```
