@@ -6,3 +6,6 @@ target_link_libraries(bitstamp_ws_test ws ssl crypto util ${Boost_LIBRARIES})
 
 add_executable(ws_test ws_test.cc)
 target_link_libraries(ws_test ssl crypto ws util ${Boost_LIBRARIES})
+
+add_executable(my_test my_test.cc)
+target_link_libraries(my_test ssl crypto ws util ${Boost_LIBRARIES})

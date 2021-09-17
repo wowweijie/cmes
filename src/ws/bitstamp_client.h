@@ -4,12 +4,13 @@
 #include <external/json.hpp>
 #include <string>
 #include <vector>
+#include <ws/client.h>
 
 using json = nlohmann::json;
 
 namespace bitstamp{
 
-class WSClient
+class WSClient : ws::IWSClient
 {
   public:
     WSClient();

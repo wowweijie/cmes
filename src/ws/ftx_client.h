@@ -4,12 +4,13 @@
 #include <external/json.hpp>
 #include <string>
 #include <vector>
+#include <ws/client.h>
 
 using json = nlohmann::json;
 
 namespace ftx {
 
-class WSClient
+class WSClient : public ws::IWSClient
 {
   public:
     WSClient();
