@@ -2,8 +2,8 @@
 
 #include <external/json.hpp>
 #include <functional>
-#include <websocketpp/client.hpp>
-#include <websocketpp/config/asio_client.hpp>
+#include <external/websocketpp/client.hpp>
+#include <external/websocketpp/config/asio_client.hpp>
 
 using json = nlohmann::json;
 
