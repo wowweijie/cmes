@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(ftxclient)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_FLAGS "-Wall -Werror -Wfatal-errors -Wpedantic -Wextra -Wmissing-include-dirs -Wconversion -Wsign-conversion -pthread")
 add_compile_options(-Wall -Werror -Wfatal-errors -Wpedantic -Wextra -Wmissing-include-dirs -Wconversion -Wsign-conversion -pthread)
 
@@ -21,3 +22,4 @@ add_subdirectory(src/rest)
 add_subdirectory(src/ws)
 add_subdirectory(src/util)
 add_subdirectory(src/example)
+add_subdirectory(src/engine)
